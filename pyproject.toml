@@ -1,6 +1,6 @@
 [project]
 name = "qrserver"
-version = "1.0"  # keep in sync with app/version.py
+version = "1.1"  # keep in sync with app/version.py
 description = "QR code redirect and image server"
 readme = "README.md"
 requires-python = ">=3.13"

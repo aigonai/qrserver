@@ -3,5 +3,5 @@
 
 
 # VERSIONHERE:QRSERVER — keep in sync with pyproject.toml
-__version__ = "1.0"
+__version__ = "1.1"
 __date__ = "2026-03-05"

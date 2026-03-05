@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# Push to remote server and restart QR server in production
+# Copy to `cyclegit` and adjust SERVER, REMOTE, BRANCH, PROD_PATH, HEALTH_URL.
+
+SERVER=myserver            # SSH host alias
+REMOTE=myserver            # git remote name
+BRANCH=dev                 # branch to push
+PROD_PATH=/home/USER/prod/qrserver
+HEALTH_URL=https://qr.example.com/health
+
+RESTART=false
+STATUS=false
+
+if [[ "$1" == "--restart" ]]; then
+    RESTART=true
+elif [[ "$1" == "--status" ]]; then
+    STATUS=true
+fi
+
+if [ "$STATUS" = true ]; then
+    echo "==> Supervisor status..."
+    ssh -o ConnectTimeout=3 root@$SERVER "supervisorctl status server_qr" 2>/dev/null || echo "Could not connect"
+    echo
+    echo "==> Health check..."
+    curl -s $HEALTH_URL | python -m json.tool
+    exit 0
+fi
+
+echo "==> Pushing to $REMOTE..."
+if git push $REMOTE $BRANCH --force; then
+    echo "✓ Pushed to $REMOTE"
+
+    echo "==> Updating prod on $SERVER..."
+    if ssh -o ConnectTimeout=3 root@$SERVER "su - USER -c 'cd $PROD_PATH && git reset --hard $BRANCH'"; then
+        echo "✓ Prod updated"
+    else
+        echo "✗ Could not update prod"
+    fi
+
+    if [ "$RESTART" = true ]; then
+        echo "==> Restarting QR server..."
+        if ssh -o ConnectTimeout=3 root@$SERVER "supervisorctl restart server_qr" 2>/dev/null; then
+            echo "✓ QR server restarted"
+        else
+            echo "✗ Could not restart"
+        fi
+
+        sleep 1
+        echo "==> Health check..."
+        curl -s $HEALTH_URL | python -m json.tool
+    fi
+else
+    echo "✗ Failed to push to $REMOTE"
+fi
