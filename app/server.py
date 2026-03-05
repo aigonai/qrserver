@@ -9,7 +9,7 @@ import qrcode.constants
 from fastapi import FastAPI, Query, Response
 from fastapi.responses import HTMLResponse, RedirectResponse
 
-from .access_log import AccessLogMiddleware
+from .redirect_log import RedirectLogMiddleware
 from .config import CONFIG_SOURCE, PORT, QR_CREDENTIAL, SIGNING_SECRET, SOCKET_PATH, URL
 from .version import __version__
 from .qrdata import QREntry, QRCODES, QRCODES_BY_SLUG, QRDATA_SOURCE
@@ -82,7 +82,7 @@ def create_app() -> FastAPI:
         redoc_url=None,
     )
 
-    app.add_middleware(AccessLogMiddleware)
+    app.add_middleware(RedirectLogMiddleware)
 
     @app.get("/health")
     async def health():

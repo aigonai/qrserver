@@ -1,5 +1,6 @@
 __pycache__/
 *.pyc
 .venv/
-access.jsonl
+redirect.jsonl
 run
+cyclegit
