@@ -1,0 +1,21 @@
+[project]
+name = "qrserver"
+version = "1.0"  # keep in sync with app/version.py
+description = "QR code redirect and image server"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "qrcode[pil]",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-anyio",
+    "httpx",
+]
+
+[project.scripts]
+qrserver = "app.main:main"

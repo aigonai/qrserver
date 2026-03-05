@@ -1,0 +1,16 @@
+#!/bin/bash
+# Production run script for QR Server
+#
+# Usage:
+#   ./run              # Run on Unix socket (production, behind Caddy)
+#   ./run --port 8199  # Run on TCP port (local dev)
+#
+# Copy this to `run` and adjust UV_BIN and paths for your deployment.
+
+set -e
+cd "$(dirname "$0")"
+
+UV_BIN=${UV_BIN:-/home/USER/.local/bin/uv}
+
+echo "Starting QR Server..."
+$UV_BIN run python -m app.main "$@"
