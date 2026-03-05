@@ -27,7 +27,7 @@ class AccessLogMiddleware(BaseHTTPMiddleware):
             "query": str(request.url.query) or None,
             "status": response.status_code,
             "duration_ms": duration_ms,
-            "client": request.client.host if request.client else None,
+            "client": request.headers.get("x-forwarded-for", request.client.host if request.client else None),
             "user_agent": request.headers.get("user-agent"),
             "referer": request.headers.get("referer"),
         }
